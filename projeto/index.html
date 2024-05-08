@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEP</title>
+</head>
+<body>
+    <div id="app">
+        <h1>CEP</h1>
+        <input type="text" v-model="cep" v-on:change="consulta_cep" maxlength="8">
+        <div v-if="cep_data != null && cep_data.logradouro != null">
+            <table>
+                <tr v-for="(item, index) in cep_keys">
+                    <td>
+                        {{item}}
+                    </td>
+                    <td>
+                        {{cep_data[item]}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button type="submit" v-on:click="consulta_cep">pesquisar</button>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data:{
+            cep:"",
+            cep_data:null,
+            cep_keys: [],
+        },
+        methods:{
+            consulta_cep(){
+                var self = this;
+                axios.get('https://viacep.com.br/ws/'+this.cep+'/json/')
+                .then(function (response) {
+                    self.cep_data = response.data;
+                    console.log(response);
+
+                    self.cep_keys = Object.keys(self.cep_data);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                })
+                .finally(function () {
+                });
+            }
+        },
+    });
+</script>
+</html>
